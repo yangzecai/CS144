@@ -10,14 +10,19 @@
 //! and then no more bytes can be written.
 class ByteStream {
   private:
-    // Your code here -- add private members as necessary.
-
-    // Hint: This doesn't need to be a sophisticated data structure at
-    // all, but if any of your tests are taking longer than a second,
-    // that's a sign that you probably want to keep exploring
-    // different approaches.
-
     bool _error{};  //!< Flag indicating that the stream suffered an error.
+    size_t _capacity;
+    size_t _buffer_capacity;
+    char *_buffer;
+    size_t _head;
+    size_t _tail;
+    size_t _bytes_read;
+    size_t _bytes_written;
+    bool _input_ended;
+
+    void move_pointer(size_t &pointer, size_t size) const;
+    size_t local_remaining_capacity() const;
+    size_t local_buffer_size() const;
 
   public:
     //! Construct a stream with room for `capacity` bytes.
