@@ -18,7 +18,7 @@ ByteStream::ByteStream(const size_t capacity)
     : _error(false)
     , _capacity(capacity)
     , _buffer_capacity(capacity + 1)
-    , _buffer(new char[capacity + 1])
+    , _buffer(_buffer_capacity, 0)
     , _head(0)
     , _tail(0)
     , _bytes_read(0)
@@ -30,7 +30,7 @@ void ByteStream::move_pointer(size_t &pointer, size_t size) const { pointer = (p
 size_t ByteStream::write(const string &data) {
     size_t bytes_written = 0;
     while (size_t bytes_to_write = min(data.size() - bytes_written, local_remaining_capacity()) != 0) {
-        strncpy(_buffer + _tail, data.data() + bytes_written, bytes_to_write);
+        strncpy(_buffer.data() + _tail, data.data() + bytes_written, bytes_to_write);
         bytes_written += bytes_to_write;
         move_pointer(_tail, bytes_to_write);
     }
@@ -45,7 +45,7 @@ string ByteStream::peek_output(const size_t len) const {
     ret.reserve(len);
     size_t shadow_head = _head;
     while (size_t bytes_to_peek = min(len - bytes_peeked, local_buffer_size()) != 0) {
-        ret.append(_buffer + shadow_head, bytes_to_peek);
+        ret.append(_buffer.data() + shadow_head, bytes_to_peek);
         bytes_peeked += bytes_to_peek;
         move_pointer(shadow_head, bytes_to_peek);
     }

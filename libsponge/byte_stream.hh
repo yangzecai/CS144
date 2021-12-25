@@ -13,7 +13,7 @@ class ByteStream {
     bool _error{};  //!< Flag indicating that the stream suffered an error.
     size_t _capacity;
     size_t _buffer_capacity;
-    char *_buffer;
+    std::string _buffer;
     size_t _head;
     size_t _tail;
     size_t _bytes_read;

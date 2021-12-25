@@ -4,7 +4,9 @@
 #include "byte_stream.hh"
 
 #include <cstdint>
+#include <set>
 #include <string>
+#include <vector>
 
 //! \brief A class that assembles a series of excerpts from a byte stream (possibly out of order,
 //! possibly overlapping) into an in-order byte stream.
@@ -14,6 +16,22 @@ class StreamReassembler {
 
     ByteStream _output;  //!< The reassembled in-order byte stream
     size_t _capacity;    //!< The maximum number of bytes
+    std::string _buffer;
+    std::set<uint64_t> _segment_begins;
+    std::set<uint64_t> _segment_ends;
+    uint64_t _next_segment_begin;
+    size_t _unassembled_bytes;
+    size_t _eof_index;
+    size_t _offset;
+
+    void get_nonoverlapping_segment(size_t begin_of_segment,
+                                    size_t end_of_segment,
+                                    std::vector<size_t> &begins,
+                                    std::vector<size_t> &ends) const;
+    void push_nonoverlapping_substring(const std::string &data,
+                                       const size_t index,
+                                       const size_t begin_of_data,
+                                       const size_t end_of_data);
 
   public:
     //! \brief Construct a `StreamReassembler` that will store up to `capacity` bytes.
