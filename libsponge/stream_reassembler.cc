@@ -30,48 +30,49 @@ StreamReassembler::StreamReassembler(const size_t capacity)
 //! possibly out-of-order, from the logical stream, and assembles any newly
 //! contiguous substrings and writes them into the output stream in order.
 void StreamReassembler::push_substring(const string &data, const size_t index, const bool eof) {
-    size_t begin_of_data = 0;
-    size_t end_of_data = data.size();
-    if (index < _next_segment_begin) {
-        begin_of_data += _next_segment_begin - index;
-    }
-    if (index + data.size() > _capacity + _offset) {
-        end_of_data = _capacity + _offset - index ;
-    }
+    DUMMY_CODE(data, index, eof);
+    // size_t begin_of_data = 0;
+    // size_t end_of_data = data.size();
+    // if (index < _next_segment_begin) {
+    //     begin_of_data += _next_segment_begin - index;
+    // }
+    // if (index + data.size() > _capacity + _offset) {
+    //     end_of_data = _capacity + _offset - index ;
+    // }
 
-    vector<size_t> begins;
-    vector<size_t> ends;
-    get_nonoverlapping_segment(index + begin_of_data, index + end_of_data, begins, ends);
-    for (size_t i = 0; i < begins.size(); ++i) {
-        push_nonoverlapping_substring(data, index, begins[i] - index, ends[i] - index);
-    }
+    // vector<size_t> begins;
+    // vector<size_t> ends;
+    // get_nonoverlapping_segment(index + begin_of_data, index + end_of_data, begins, ends);
+    // for (size_t i = 0; i < begins.size(); ++i) {
+    //     push_nonoverlapping_substring(data, index, begins[i] - index, ends[i] - index);
+    // }
 
-    if (!_segment_begins.empty() && *_segment_begins.begin() == _next_segment_begin) {
-        uint64_t begin_of_contiguous = *_segment_begins.begin();
-        uint64_t end_of_contiguous = *_segment_ends.begin();
-        uint64_t contiguous_length = end_of_contiguous - begin_of_contiguous;
-        size_t written_length = _output.write(_buffer.substr(begin_of_contiguous - _offset, contiguous_length));
-        _next_segment_begin = begin_of_contiguous + written_length;
-        if (contiguous_length == written_length) {
-            _segment_begins.erase(_segment_begins.begin());
-            _segment_ends.erase(_segment_ends.begin());
-        } else {
-            _segment_begins.erase(_segment_begins.begin());
-            _segment_begins.insert(_next_segment_begin);
-        }
-        _unassembled_bytes -= written_length;
-        _offset += written_length;
-        if (!_segment_begins.empty()) {
-            strncpy(_buffer.data(), _buffer.data() + written_length, *_segment_ends.rbegin() - _next_segment_begin);
-        }
-    }
+    // if (!_segment_begins.empty() && *_segment_begins.begin() == _next_segment_begin) {
+    //     uint64_t begin_of_contiguous = *_segment_begins.begin();
+    //     uint64_t end_of_contiguous = *_segment_ends.begin();
+    //     uint64_t contiguous_length = end_of_contiguous - begin_of_contiguous;
+    //     size_t written_length = _output.write(_buffer.substr(begin_of_contiguous - _offset, contiguous_length));
+    //     _next_segment_begin = begin_of_contiguous + written_length;
+    //     if (contiguous_length == written_length) {
+    //         _segment_begins.erase(_segment_begins.begin());
+    //         _segment_ends.erase(_segment_ends.begin());
+    //     } else {
+    //         _segment_begins.erase(_segment_begins.begin());
+    //         _segment_begins.insert(_next_segment_begin);
+    //     }
+    //     _unassembled_bytes -= written_length;
+    //     _offset += written_length;
+    //     if (!_segment_begins.empty()) {
+    //         strncpy(_buffer.data(), _buffer.data() + written_length, *_segment_ends.rbegin() - _next_segment_begin);
+    //     }
+    // }
 
-    if (eof) {
-        _eof_index = index + data.size();
-    }
-    if (_next_segment_begin == _eof_index) {
-        _output.end_input();
-    }
+    // if (eof) {
+    //     _eof_index = index + data.size();
+    // }
+    // if (_next_segment_begin == _eof_index) {
+    //     _output.end_input();
+    // }
 }
 
 size_t StreamReassembler::unassembled_bytes() const { return _unassembled_bytes; }
