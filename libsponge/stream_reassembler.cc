@@ -35,8 +35,8 @@ void StreamReassembler::push_substring(const string &data, const size_t index, c
     if (index < _next_segment_begin) {
         begin_of_data += _next_segment_begin - index;
     }
-    if (index + data.size() > _capacity + _next_segment_begin) {
-        end_of_data = _capacity + _next_segment_begin - index ;
+    if (index + data.size() > _capacity + _next_segment_begin - _output.buffer_size()) {
+        end_of_data = _capacity + _next_segment_begin - index - _output.buffer_size();
     }
 
     vector<size_t> begins;
