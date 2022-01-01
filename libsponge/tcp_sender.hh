@@ -2,11 +2,14 @@
 #define SPONGE_LIBSPONGE_TCP_SENDER_HH
 
 #include "byte_stream.hh"
+#include "sliding_window.hh"
 #include "tcp_config.hh"
 #include "tcp_segment.hh"
 #include "wrapping_integers.hh"
 
 #include <functional>
+#include <map>
+#include <memory>
 #include <queue>
 
 //! \brief The "sender" part of a TCP implementation.
@@ -32,6 +35,14 @@ class TCPSender {
     //! the (absolute) sequence number for the next byte to be sent
     uint64_t _next_seqno{0};
 
+    SlidingWindow _window;
+    size_t _bytes_in_flight;
+    size_t _consecutive_retransmissions;
+    size_t _cur_time;
+    size_t _retransmission_timeout;
+    std::map<uint64_t, TCPSegment> _outstanding_segements;  // <min askno, segment>
+    bool _fin_sent;
+    bool _zero_window_size;
   public:
     //! Initialize a TCPSender
     TCPSender(const size_t capacity = TCPConfig::DEFAULT_CAPACITY,
@@ -66,10 +77,10 @@ class TCPSender {
     //! \brief How many sequence numbers are occupied by segments sent but not yet acknowledged?
     //! \note count is in "sequence space," i.e. SYN and FIN each count for one byte
     //! (see TCPSegment::length_in_sequence_space())
-    size_t bytes_in_flight() const;
+    size_t bytes_in_flight() const { return _bytes_in_flight; }
 
     //! \brief Number of consecutive retransmissions that have occurred in a row
-    unsigned int consecutive_retransmissions() const;
+    unsigned int consecutive_retransmissions() const { return _consecutive_retransmissions; }
 
     //! \brief TCPSegments that the TCPSender has enqueued for transmission.
     //! \note These must be dequeued and sent by the TCPConnection,

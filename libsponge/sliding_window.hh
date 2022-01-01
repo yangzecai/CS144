@@ -18,6 +18,8 @@ class SlidingWindow {
 
     void reset_window_size(size_t window_size);
 
+    size_t window_size() const { return _window_size; }
+
   private:
     std::vector<std::pair<uint64_t, uint64_t>> get_uncovered_subblocks(uint64_t block_begin, uint64_t block_end) const;
 
