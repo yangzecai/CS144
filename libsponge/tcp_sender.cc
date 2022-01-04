@@ -104,11 +104,14 @@ void TCPSender::tick(const size_t ms_since_last_tick) {
     if (_cur_time >= _retransmission_timeout) {
         _segments_out.push(_outstanding_segements.begin()->second);
         if (!_zero_window_size) {
-            ++_consecutive_retransmissions;    
+            ++_consecutive_retransmissions;
             _retransmission_timeout *= 2;
         }
         _cur_time = 0;
     }
 }
 
-void TCPSender::send_empty_segment() { _segments_out.push(TCPSegment()); }
+void TCPSender::send_empty_segment() {
+    _segments_out.push(TCPSegment());
+    _segments_out.back().header().seqno = wrap(_next_seqno, _isn);
+}

@@ -23,6 +23,8 @@ class TCPConnection {
 
     size_t _time_since_last_segment_received{0};
 
+    bool _active{true};
+
     void add_segments_out();
 
   public:

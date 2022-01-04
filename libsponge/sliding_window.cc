@@ -13,7 +13,13 @@ size_t SlidingWindow::get_slidable_size() const {
 }
 
 size_t SlidingWindow::slide_window(size_t slide_size) {
+    if (slide_size == 0) {
+        return 0;
+    }
     size_t slidable = get_slidable_size();
+    if (slidable == 0) {
+        return 0;
+    }
     size_t actual_slide = std::min(slide_size, slidable);
     _left_edge += actual_slide;
     if (actual_slide == slidable) {
