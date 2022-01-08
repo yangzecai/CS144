@@ -32,20 +32,16 @@ TCPSender::TCPSender(const size_t capacity, const uint16_t retx_timeout, const s
     , _zero_window_size(false) {}
 
 void TCPSender::fill_window() {
-    while (1) {
-        if (_fin_sent) {
-            return;
-        }
-
+    while (!_fin_sent) {
         if (_zero_window_size) {
             _window.reset_window_size(1);
         }
-        TCPSegment segment;
+        
         size_t syn_bytes = (_next_seqno == 0 ? 1 : 0);
         _bytes_in_flight += syn_bytes;
         size_t payload_bytes = std::min(TCPConfig::MAX_PAYLOAD_SIZE,
                                         std::min(_stream.buffer_size(), _window.window_size() - _bytes_in_flight));
-        segment.payload() = _stream.read(payload_bytes);
+        string payload = _stream.read(payload_bytes);
         _bytes_in_flight += payload_bytes;
         size_t fin_bytes = 0;
         if (_stream.eof() && _window.window_size() > _bytes_in_flight) {
@@ -57,6 +53,8 @@ void TCPSender::fill_window() {
         if (total_bytes == 0) {
             return;
         }
+        TCPSegment segment;
+        segment.payload() = Buffer(std::move(payload));
         segment.header().syn = (syn_bytes == 1);
         segment.header().fin = (fin_bytes == 1);
         segment.header().seqno = wrap(_next_seqno, _isn);

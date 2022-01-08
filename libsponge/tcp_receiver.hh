@@ -21,7 +21,7 @@ class TCPReceiver {
     size_t _capacity;
 
     std::optional<WrappingInt32> _isn;
-    int64_t _begin_of_unassembled_index;
+    uint64_t _begin_of_unassembled_index;
 
   public:
     //! \brief Construct a TCP receiver

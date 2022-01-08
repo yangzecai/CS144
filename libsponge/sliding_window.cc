@@ -78,7 +78,7 @@ std::vector<std::pair<uint64_t, uint64_t>> SlidingWindow::get_uncovered_subblock
             tmp_end = block_end;
         }
         if (tmp_begin < tmp_end) {
-            subblocks.push_back(std::make_pair(tmp_begin, tmp_end));
+            subblocks.emplace_back(tmp_begin, tmp_end);
         }
         block_begin = tmp_end;
     }

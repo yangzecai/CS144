@@ -13,7 +13,7 @@ size_t RingBuffer::insert(const char *data, size_t len, size_t pos) {
     size_t pseudo_tail = _head;
     move_pointer(pseudo_tail, pos);
     while (size_t bytes_to_write = std::min(len - bytes_written, local_remaining_capacity(pseudo_tail)) != 0) {
-        std::strncpy(_buffer.data() + pseudo_tail, data + bytes_written, bytes_to_write);
+        std::memcpy(_buffer.data() + pseudo_tail, data + bytes_written, bytes_to_write);
         bytes_written += bytes_to_write;
         move_pointer(pseudo_tail, bytes_to_write);
     }
@@ -50,7 +50,7 @@ size_t RingBuffer::pop(const size_t len) {
 
 std::string RingBuffer::read(const size_t len) {
     std::string ret = peek(len);
-    pop(len);
+    pop(ret.size());
     return ret;
 }
 

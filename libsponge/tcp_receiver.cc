@@ -24,6 +24,10 @@ void TCPReceiver::segment_received(const TCPSegment &seg) {
             return;
         }
     }
+    uint64_t absolute_seqno = unwrap(seg.header().seqno, _isn.value(), _begin_of_unassembled_index);
+    if (absolute_seqno + static_cast<uint64_t>(seg.length_in_sequence_space()) <= _begin_of_unassembled_index) {
+        return;
+    }
     size_t pre_received = stream_out().buffer_size();
     int64_t index = unwrap(WrappingInt32(seg.header().seqno.raw_value() + (seg.header().syn ? 1 : 0)),
                            _isn.value(),

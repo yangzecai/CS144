@@ -43,6 +43,7 @@ class TCPSender {
     std::map<uint64_t, TCPSegment> _outstanding_segements;  // <min askno, segment>
     bool _fin_sent;
     bool _zero_window_size;
+
   public:
     //! Initialize a TCPSender
     TCPSender(const size_t capacity = TCPConfig::DEFAULT_CAPACITY,
