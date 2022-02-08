@@ -157,6 +157,7 @@ void TCPSpongeSocket<AdaptT>::_initialize_TCP(const TCPConfig &config) {
                             while (not _tcp->segments_out().empty()) {
                                 _datagram_adapter.write(_tcp->segments_out().front());
                                 _tcp->segments_out().pop();
+                                cerr << "sent something \n";
                             }
                         },
                         [&] { return not _tcp->segments_out().empty(); });
