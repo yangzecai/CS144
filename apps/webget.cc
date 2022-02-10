@@ -7,7 +7,7 @@
 using namespace std;
 
 void get_URL(const string &host, const string &path) {
-    CS144TCPSocket client_socket;
+    FullStackSocket client_socket;
     Address server_addr(host, std::string("http"));
     client_socket.connect(server_addr);
     std::string send_content;
